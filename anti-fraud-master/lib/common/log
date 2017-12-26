@@ -1,0 +1,15 @@
+[2017-06-21 16:23:57,541] [INFO] \[ jklogger.py:46 - root ] tid=140735268573184;h=ufenqideMacBook-Pro-2.local;t=2017-06-21 16:23:57;k1=v1 
+[2017-06-21 16:23:57,542] [INFO] \[ jklogger.py:46 - root ] tid=140735268573184;h=ufenqideMacBook-Pro-2.local;t=2017-06-21 16:23:57;k1=v1;k2=v2 
+[2017-06-21 16:23:57,543] [INFO] \[ jklogger.py:47 - root ] tid=140735268573184;h=ufenqideMacBook-Pro-2.local;t=2017-06-21 16:23:57;k1=v1;k2=v2 
+[2017-06-21 16:23:57,543] [ERROR] \[ jklogger.py:49 - root ] tid=140735268573184;h=ufenqideMacBook-Pro-2.local;t=2017-06-21 16:23:57;f=jklogger.py;l=222;k1=v1;k2=v2 
+[2017-06-21 16:23:57,544] [CRITICAL] \[ jklogger.py:50 - root ] tid=140735268573184;h=ufenqideMacBook-Pro-2.local;t=2017-06-21 16:23:57;f=jklogger.py;l=223;k1=v1;k2=v2 
+[2017-06-21 16:24:42,242] [INFO] \[ jklogger.py:46 - root ] tid=140735268573184;h=ufenqideMacBook-Pro-2.local;t=2017-06-21 16:24:42;k1=v1 
+[2017-06-21 16:24:42,242] [INFO] \[ jklogger.py:46 - root ] tid=140735268573184;h=ufenqideMacBook-Pro-2.local;t=2017-06-21 16:24:42;k1=v1;k2=v2 
+[2017-06-21 16:24:42,242] [INFO] \[ jklogger.py:47 - root ] tid=140735268573184;h=ufenqideMacBook-Pro-2.local;t=2017-06-21 16:24:42;k1=v1;k2=v2 
+[2017-06-21 16:24:42,242] [ERROR] \[ jklogger.py:49 - root ] tid=140735268573184;h=ufenqideMacBook-Pro-2.local;t=2017-06-21 16:24:42;f=jklogger.py;l=222;k1=v1;k2=v2 
+[2017-06-21 16:24:42,243] [CRITICAL] \[ jklogger.py:50 - root ] tid=140735268573184;h=ufenqideMacBook-Pro-2.local;t=2017-06-21 16:24:42;f=jklogger.py;l=223;k1=v1;k2=v2 
+[2017-06-21 16:24:58,956] [INFO] \[ jklogger.py:46 - root ] tid=140735268573184;h=ufenqideMacBook-Pro-2.local;t=2017-06-21 16:24:58;k1=v1 
+[2017-06-21 16:24:58,957] [INFO] \[ jklogger.py:46 - root ] tid=140735268573184;h=ufenqideMacBook-Pro-2.local;t=2017-06-21 16:24:58;k1=v1;k2=v2 
+[2017-06-21 16:24:58,958] [INFO] \[ jklogger.py:47 - root ] tid=140735268573184;h=ufenqideMacBook-Pro-2.local;t=2017-06-21 16:24:58;k1=v1;k2=v2 
+[2017-06-21 16:24:58,958] [ERROR] \[ jklogger.py:49 - root ] tid=140735268573184;h=ufenqideMacBook-Pro-2.local;t=2017-06-21 16:24:58;f=jklogger.py;l=222;k1=v1;k2=v2 
+[2017-06-21 16:24:58,958] [CRITICAL] \[ jklogger.py:50 - root ] tid=140735268573184;h=ufenqideMacBook-Pro-2.local;t=2017-06-21 16:24:58;f=jklogger.py;l=223;k1=v1;k2=v2 

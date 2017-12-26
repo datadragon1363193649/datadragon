@@ -1,0 +1,4 @@
+Wed, 03 May 2017 10:52:43 <ipython-input-2-5fb38b60938e>[line:9] DEBUG This is debug message
+Wed, 03 May 2017 10:52:43 <ipython-input-2-5fb38b60938e>[line:10] INFO This is info message
+Wed, 03 May 2017 10:52:43 <ipython-input-2-5fb38b60938e>[line:11] WARNING This is warning message
+Wed, 03 May 2017 11:04:52 <ipython-input-4-2bad043515f9>[line:1] INFO This is info123
