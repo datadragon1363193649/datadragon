@@ -7,64 +7,69 @@ import offline_db_conf as dconf
 reload(sys)
 import numpy as np
 sys.setdefaultencoding('utf-8')
+'''
+类别型字段做编码处理
+'''
 def train(dfname):
-    # 原始数据
-    # f_file = '/Users/ufenqi/Documents/dataming/base1/data/traindataall3.csv'
-    # out_file='/Users/ufenqi/Documents/dataming/base1/config/ceiling.json'
+    UID = dconf.uid
+    TARGET = dconf.target
     f_file = dconf.data_path + dfname
     out_name = 'class' + dfname
     out_file = dconf.data_path + out_name
+    # 输出参数文件
     json_file = dconf.config_path + 'class_coding.json'
     s_file =  dconf.config_path+dconf.featurename
+    # 已知是类别型特征的名字
     class_feature_name=dconf.class_feature_name
-    feaidlist=[]
     feanamedic={}
     fdf = pd.read_csv(f_file)
-    if '1' in fdf.columns.tolist():
-        flist = ['0','1']
+    if TARGET in fdf.columns.tolist():
+        flist = [UID,TARGET]
     else:
-        flist =['0']
+        flist =[UID]
     with open(s_file, 'r') as fp:
         for line in fp:
             linelist = line.strip().split(',')
-            feaidlist.append(linelist[0])
             flist.append(linelist[0])
             feanamedic[linelist[0]] = linelist[1]
 
     fdf = fdf[flist]
     fdf = fdf.where(fdf.notnull(), -1)
-    # fdf['39u']=1.0*fdf['39']/(fdf['41']+1)
-    # fdf=fdf.round(10)
     columns=fdf.columns.tolist()
-    columns.remove('0')
-    if '1' in columns:
-        columns.remove('1')
-    quancol={}
-    dflen=len(fdf)
+    columns.remove(UID)
+    if TARGET in columns:
+        columns.remove(TARGET)
     tiandic={}
     wfp = open(json_file, 'w')
     for col in class_feature_name:
+        fdf[col]=fdf[col].astype('str')
         classcol= fdf[col].unique().tolist()
         classcol.sort()
+        # print classcol
+        # 获取不同值
         classid=[]
         for ci in range(len(classcol)):
             classid.append(str(ci))
             # print ci,classcol[ci]
+        #编码替换原始值
         if len(classcol)>0:
             fdf[col].replace(classcol, classid, inplace=True)
+        # 原始值和编码写入参数文件
+        print classcol
         for i in range(len(classcol)):
             tiandic.setdefault(feanamedic[col],{})
-            tiandic[feanamedic[col]][classcol[i]]=classid[i]
+            print col,classcol[i],classcol[i].encode('utf-8')
+            tiandic[feanamedic[col]][classcol[i].encode('utf-8')]=classid[i]
     json.dump(tiandic,wfp)
-    # fdf['469'].replace('None', '-1', inplace=True)
-    # print fdf['469'].value_counts()
     for col in columns:
         fdf[col].replace('None', '-1', inplace=True)
         fdf[col] = fdf[col].astype('float64')
-    print fdf.dtypes
+    # print fdf.dtypes
     fdf.to_csv(out_file, index=False)
+    return out_name
 def test(dfname):
-    # 原始数据
+    UID = dconf.uid
+    TARGET = dconf.target
     test_file = dconf.data_path+dfname
     out_name='class'+dfname
     out_file=dconf.data_path+out_name
@@ -75,10 +80,10 @@ def test(dfname):
     feaidlist = []
     feanamedic ={}
     # feaidlist.append('0')
-    if '1' in testdf.columns.tolist():
-        flist = ['0','1']
+    if TARGET in testdf.columns.tolist():
+        flist = [UID,TARGET]
     else:
-        flist =['0']
+        flist =[UID]
     with open(s_file, 'r') as fp:
         for line in fp:
             linelist = line.strip().split(',')
@@ -87,34 +92,39 @@ def test(dfname):
             feanamedic[linelist[0]]=linelist[1]
     testdf=testdf[flist]
     columns = testdf.columns.tolist()
-    columns.remove('0')
+    columns.remove(UID)
     # print columns
-    if '1' in columns:
-        columns.remove('1')
+    if TARGET in columns:
+        columns.remove(TARGET)
     with open(json_file , 'r') as fp:
         c = fp.readline()
         c = json.loads(c)
-    print testdf.dtypes
+    print c
+    # print testdf.dtypes
+    print len(testdf)
     for col in class_feature_name:
         classcol=[]
         classid = []
         if col in feanamedic:
             testdf[col]=testdf[col].astype('string')
-            print col,feanamedic[col]
-            # print testdf[col].unique().tolist()
             for cvalue in c[feanamedic[col]]:
-                # print cvalue,c[feanamedic[col]][cvalue]
                 classcol.append(cvalue)
                 classid.append(c[feanamedic[col]][cvalue])
-
             testdf[col].replace(classcol, classid, inplace=True)
-            print '***************'
+            testdf1=testdf[testdf[col].isin(classid)]
+            t2df=testdf.drop(testdf1.index)
+            # print len(t2df)
+            # 参数文件中有遗漏的值统一替换为0
+            for uid in t2df[UID].values.tolist():
+                testdf[col][testdf[UID]==uid]=0
     # testdf['469'].replace('None', '-1', inplace=True)
+    print len(testdf)
     for col in columns:
-        print col,feanamedic[col]
+        # print col,feanamedic[col]
         testdf[col].replace('None', '-1', inplace=True)
         testdf[col] = testdf[col].astype('float64')
     testdf.to_csv(out_file, index=False)
+    return out_name
 if __name__ == '__main__':
     tat = sys.argv[1]
     input_file = sys.argv[2]

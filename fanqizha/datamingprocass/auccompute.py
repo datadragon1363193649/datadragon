@@ -14,6 +14,7 @@ import seaborn as sns
 from sklearn.metrics import roc_curve
 from sklearn.metrics import auc
 from scipy.stats import ks_2samp
+from sklearn.metrics import r2_score
 def auctaobao():
     f_file = '/Users/ufenqi/Documents/dataming/taobao/data/score_taobao1_3'
 
@@ -460,9 +461,10 @@ def auctransition3():
 def aucscore():
     # int_file = '/Users/ufenqi/Documents/feayuqi501'
     # int_file = '/Users/ufenqi/Documents/dataming/base1/data/data_1510/test/feayuqi511'
-    int_file='/Users/ufenqi/Documents/dataming/integration/data/score_bagging_911'
-    # int_file = '/Users/ufenqi/Documents/dataming/base1/test/score_m1_715'
-    # int_file='/Users/ufenqi/Documents/dataming/bank/data/score_bank_913'
+    # int_file='/Users/ufenqi/Documents/dataming/integration/data/score_bagging_911'
+    # int_file = '/Users/ufenqi/Documents/dataming/zy_dataming/data/score_test'
+    int_file='/Users/ufenqi/Documents/dataming/zy_dataming/data/score_test'
+    # int_file = '/Users/ufenqi/Documents/dataming/integration_new/data/c_score_908'
     userlist = []
     with open(int_file, 'r') as fp2:
         for line in fp2:
@@ -472,12 +474,12 @@ def aucscore():
             # linelist.remove(linelist[0])
             userlist.append(linelist)
             # print len(linelist)
-    aucdf = pd.DataFrame(userlist,
-                         columns=['phn', 'time', 'sfscore1','yuqiday','sfscore2'])
+    # aucdf = pd.DataFrame(userlist,columns=['phn', 'time', 'sfscore1','yuqiday'])
+    aucdf = pd.DataFrame(userlist,columns=['phn', 'time', 'yuqiday', 'sfscore1'])
 
     # print aucdf.head()
     aucdf['yuqiday'] = aucdf['yuqiday'].astype('float')
-    aucdf['sfscore2'] = aucdf['sfscore2'].astype('float')
+    # aucdf['sfscore2'] = aucdf['sfscore2'].astype('float')
     # aucdf['sfscore3'] = aucdf['sfscore3'].astype('float')
     aucdf['sfscore1'] = aucdf['sfscore1'].astype('float')
     # aucdf['wecash'] = aucdf['wecash'].astype('float')
@@ -489,34 +491,35 @@ def aucscore():
     # scorelist = aucdfw['wecash'].values.tolist()
     # scorel = scorelist[int(0.1 * 6 * len(scorelist))]
     # print  aucdf['yuqiday1'].value_counts()
-    aucdf = aucdf[aucdf['yuqiday1'] > -1]
+    # aucdf = aucdf[aucdf['yuqiday1'] > -1]
+    # aucdf=aucdf.drop(aucdf[(aucdf['yuqiday1']>=20) & (aucdf['yuqiday1']<=29)].index)
     print len(aucdf)
     # aucdf = aucdf[aucdf['yuqiday1'] <30]
     # print len(aucdf)
-    a1=aucdf[['phn','yuqiday','sfscore2']]
-    a1.to_csv('/Users/ufenqi/Documents/fea_score615.csv',index=False)
+    # a1=aucdf[['phn','yuqiday','sfscore2']]
+    # a1.to_csv('/Users/ufenqi/Documents/fea_score615.csv',index=False)
     # aucdf['rulenum'] = aucdf['rulenum'].astype('float')
 
     # print aucdf['rulenum'].value_counts()
-    aucdf['yuqiday1'][(aucdf['yuqiday1'] > -1) & (aucdf['yuqiday1'] <30)] = 1
-    aucdf['yuqiday1'][aucdf['yuqiday1'] != 1] = 0
-    print aucdf['yuqiday1'].value_counts()
+    # aucdf['yuqiday1'][(aucdf['yuqiday1'] > -1) & (aucdf['yuqiday1'] <30)] = 1
+    # aucdf['yuqiday1'][aucdf['yuqiday1'] != 1] = 0
+    # print aucdf['yuqiday1'].value_counts()
 
     print '************************************************'
     # print aucdf['yuqiday1'].value_counts()
     # print "wecash AUC Score (Train): %f" % metrics.roc_auc_score(aucdf['yuqiday1'], aucdf['wecash'])
     print "sfscore1 AUC Score (Train): %f" % metrics.roc_auc_score(aucdf['yuqiday1'], aucdf['sfscore1'])
-    print "sfscore2 AUC Score (Train): %f" % metrics.roc_auc_score(aucdf['yuqiday1'], aucdf['sfscore2'])
+    # print "sfscore2 AUC Score (Train): %f" % metrics.roc_auc_score(aucdf['yuqiday1'], aucdf['sfscore2'])
     # fpr_grd_lm, tpr_grd_lm, _ = roc_curve(aucdf['yuqiday1'], aucdf['wecash'], pos_label=1)
     fpr_grd_lm1, tpr_grd_lm1, _ = roc_curve(aucdf['yuqiday1'], aucdf['sfscore1'], pos_label=1)
-    fpr_grd_lm2, tpr_grd_lm2, _ = roc_curve(aucdf['yuqiday1'], aucdf['sfscore2'], pos_label=1)
-    aucdfw = aucdf.sort_values(by='sfscore2', ascending=False)
+    fpr_grd_lm2, tpr_grd_lm2, _ = roc_curve(aucdf['yuqiday1'], aucdf['sfscore1'], pos_label=1)
+    aucdfw = aucdf.sort_values(by='sfscore1', ascending=False)
     yudaylist = aucdfw['yuqiday1'].values.tolist()
     # scorelist=aucdfw['wecash'].values.tolist()
-    y_predprobl=aucdfw['sfscore2'].values.tolist()
+    y_predprobl=aucdfw['sfscore1'].values.tolist()
     get_ks = lambda y_pred, y_true: ks_2samp(y_pred[y_true == 1], y_pred[y_true != 1]).statistic
 
-    print 'ks值', get_ks(aucdfw['sfscore2'], aucdfw['yuqiday1'])
+    print 'ks值', get_ks(aucdfw['sfscore1'], aucdfw['yuqiday1'])
     zhenglist=[]
     fulist=[]
     calist=[]
@@ -525,14 +528,14 @@ def aucscore():
     fuz = len(aucdfw[aucdfw['yuqiday1'] == 0])
     for i in range(0,100):
         lnum=int(len(aucdfw)*i/100)
-        print lnum
+        # print lnum
         adf=aucdfw.head(lnum)
         z=len(adf[adf['yuqiday1']==1])*1.0/zhengz
         f=len(adf[adf['yuqiday1'] == 0])*1.0/fuz
         zhenglist.append(z)
         fulist.append(f)
         calist.append(abs(z-f))
-        print i,abs(z-f)
+        # print i,abs(z-f)
         xlist.append(i)
     for i in range(0,10):
         num=0
@@ -544,13 +547,20 @@ def aucscore():
     num=0
     for ui in range(0,len(aucdfw)):
         # index1 = int(0.1 * i * len(y_predprobl))
-        if y_predprobl[ui]>( 0.21):
+        if y_predprobl[ui]>0.40:
             num+=1
-    print 'scor:',0.21,'pass:',1.0*num/len(aucdfw)
+    print 'scor:',0.40,'pass:',1.0*num/len(aucdfw)
+    yudf=aucdfw[aucdfw['sfscore1']>0.39]
+    yunum=len(yudf[yudf['yuqiday1']==0])
+    print '借款人数:',len(yudf)
+    print '逾期:',yunum*1.0/len(yudf)
+    # 好坏展示图
     red, blue = sns.color_palette("Set1", 2)
     print aucdf.head()
-    sns.kdeplot(aucdf['sfscore2'][aucdf['yuqiday1'] == 1], shade=True, color=red)
-    sns.kdeplot(aucdf['sfscore2'][aucdf['yuqiday1'] == 0], shade=True, color=blue)
+    sns.kdeplot(aucdf['sfscore1'][aucdf['yuqiday1'] == 1], shade=True, color=red)
+    sns.kdeplot(aucdf['sfscore1'][aucdf['yuqiday1'] == 0], shade=True, color=blue)
+    plt.show()
+
 
     # aucdfm1 = aucdf.sort_values(by='sfscore1', ascending=False)
     # aucdfm2 = aucdf.sort_values(by='sfscore2', ascending=False)
@@ -589,7 +599,7 @@ def aucscore():
     # plt.plot(xlist, fulist, 'g', linewidth=2)
     # plt.plot(xlist, calist, 'b', linewidth=2)
     # plt.ylim(ymin=0)
-    plt.show()
+    # plt.show()
     # plt.figure(1)
     # plt.plot([0, 1], [0, 1], 'k--')
     # plt.plot(fpr_grd_lm, tpr_grd_lm, label='GBT + LR')
@@ -604,6 +614,7 @@ def aucscore():
     # aucdfw['sfscore2']=np.log(aucdfw['sfscore2'])
     # print aucdfw['sfscore2']
     # y_predprobl = aucdfw['sfscore1'].values.tolist()
+    # 预测值分布图
     # plt.figure(1)
     # n,bins,patches=plt.hist(y_predprobl,100,normed=1,facecolor='g',alpha=0.75)
     # plt.xlabel('hist')
@@ -614,11 +625,11 @@ def aucscore():
     # plt.show()
     # plt.figure(1)
     # plt.plot([0, 1], [0, 1], 'k--')
-
-    y_predprobl = aucdfw['sfscore2'].values.tolist()
-    ylist=[]
-    for y in y_predprobl:
-        ylist.append(y)
+    #
+    # y_predprobl = aucdfw['sfscore1'].values.tolist()
+    # ylist=[]
+    # for y in y_predprobl:
+    #     ylist.append(y)
     # plt.figure(1)
     # n, bins, patches = plt.hist(ylist, 100, normed=1, facecolor='g', alpha=0.75)
     # plt.xlabel('score')
@@ -1074,6 +1085,73 @@ def describute():
     plt.show()
     plt.figure(1)
     plt.plot([0, 1], [0, 1], 'k--')
+def earning():
+    s_file = '/Users/ufenqi/Documents/dataming/earnings/data/score511_p_call_class'
+    true = []
+    pred=[]
+    ulist=[]
+    with open(s_file,'r') as fp:
+        for line in fp:
+            linelist=line.strip().split(',')
+            true.append(float(linelist[1]))
+            pred.append(float(linelist[-1]))
+            ulist.append([float(linelist[1]),float(linelist[-1])])
+    udf=pd.DataFrame(ulist,columns=['true','pred'])
+    udfw = udf.sort_values(by='pred', ascending=False)
+    ppred=udfw['pred'].values.tolist()
+    ptrue = udfw['true'].values.tolist()
+    xlist=range(len(ptrue))
+    print "MAE:", metrics.mean_absolute_error(true, pred)
+
+    # calculate MSE using scikit-learn
+    print "MSE:", metrics.mean_squared_error(true, pred)
+
+    # calculate RMSE using scikit-learn
+    print "RMSE:", np.sqrt(metrics.mean_squared_error(true, pred))
+    print 'R2',r2_score(true,pred)
+    # plt.figure(1)
+    # n, bins, patches = plt.hist(true, 100, normed=1, facecolor='g', alpha=0.75)
+    # plt.xlabel('hist')
+    # plt.ylabel('Probability')
+    # plt.title('Histogram')
+    # plt.show()
+    fig, ax = plt.subplots()
+    plt.scatter(xlist, ptrue, color ='r')
+    plt.scatter(xlist, ppred, color ='g')
+    plt.ylim(ymin=0)
+    plt.show()
+def earning_class():
+    s_file = '/Users/ufenqi/Documents/dataming/earnings/data/score511_p_call_class'
+    true = []
+    pred=[]
+    ulist=[]
+    with open(s_file,'r') as fp:
+        for line in fp:
+            linelist=line.strip().split(',')
+            true.append(float(linelist[1]))
+            pred.append(float(linelist[-1]))
+            ulist.append([float(linelist[1]),float(linelist[-1])])
+    aucdf=pd.DataFrame(ulist,columns=['true','pred'])
+    aucdf['true'] = aucdf['true'].astype('float')
+    aucdf['pred'] = aucdf['pred'].astype('float')
+    print len(aucdf)
+    aucdf['true'][aucdf['true'] <= 430] = 0
+    aucdf['true'][aucdf['true'] != 0] = 1
+    print aucdf['true'].value_counts()
+
+    print '************************************************'
+    # print aucdf['yuqiday1'].value_counts()
+    # print "wecash AUC Score (Train): %f" % metrics.roc_auc_score(aucdf['yuqiday1'], aucdf['wecash'])
+    print "sfscore1 AUC Score (Train): %f" % metrics.roc_auc_score(aucdf['true'], aucdf['pred'])
+    get_ks = lambda y_pred, y_true: ks_2samp(y_pred[y_true == 1], y_pred[y_true != 1]).statistic
+    print 'ks值', get_ks(aucdf['pred'], aucdf['true'])
+    plt.plot([0, 1], [0, 1], 'k--')
+    fpr_grd_lm, tpr_grd_lm, _ = roc_curve(aucdf['true'], aucdf['pred'])
+    plt.plot(fpr_grd_lm, tpr_grd_lm, label='pred')
+    plt.xlabel('False positive rate')
+    plt.ylabel('True positive rate')
+    plt.legend(loc='best')
+    plt.show()
 def fea_plt():
     s_file = '/Users/ufenqi/Documents/dataming/model_yu/data/score_10252.csv'
     aucdf=pd.read_csv(s_file)
@@ -1088,6 +1166,117 @@ def fea_plt():
     # plt.ylabel('Probability')
     # plt.title('Histogram')
     # plt.show()
+def earning_assess():
+    s1file='/Users/ufenqi/Documents/dataming/earnings/data/feayuqi511_screen'
+    s2file='/Users/ufenqi/Documents/dataming/earnings/data/score511_call_class'
+    userlist = []
+    with open(s1file, 'r') as fp2:
+        for line in fp2:
+            linelist = line.strip().split(',')
+            if linelist[1] == 'NULL' or linelist[4] == 'NULL' or linelist[5] == 'NULL' or linelist[-2] == 'NULL':
+                continue
+            # linelist.remove(linelist[0])
+            userlist.append(linelist)
+            # print len(linelist)
+    aucdf = pd.DataFrame(userlist,
+                         columns=['phn', 'wecash', 'rule', 'yuqiday', 'sfscore1', 'sfscore2'])
+
+    # print aucdf.head()
+    aucdf['yuqiday'] = aucdf['yuqiday'].astype('float')
+    aucdf['sfscore2'] = aucdf['sfscore2'].astype('float')
+    # aucdf['sfscore3'] = aucdf['sfscore3'].astype('float')
+    aucdf['sfscore1'] = aucdf['sfscore1'].astype('float')
+    aucdf['yuqiday1'] = aucdf['yuqiday']
+    aucdf = aucdf[aucdf['yuqiday1'] > -1]
+    aucdf['yuqiday1'][(aucdf['yuqiday1'] > -1) & (aucdf['yuqiday1'] < 30)] = 1
+    aucdf['yuqiday1'][aucdf['yuqiday1'] != 1] = 0
+    aucdfw = aucdf.sort_values(by='sfscore2', ascending=False)
+    headnum1=927
+    headnum2 = 1854
+    # headdf1=aucdfw.head(headnum2)
+    yurato1=0
+    money1 = 0
+    headdf2=aucdfw.head(headnum2)
+    for i in range(5):
+        headdf1 = headdf2.sample(frac=0.5, random_state=i)
+        phnlist1=headdf1['phn'].values.tolist()
+        yuday1=headdf1['yuqiday1'].values.tolist()
+        yunum1=0
+        for yu in yuday1:
+            if yu==0.0:
+                yunum1+=1
+        yuratorandom=yunum1*1.0/headnum1
+        yurato1=yurato1+yuratorandom
+        # print yurato1
+        phnlist2 = headdf2['phn'].values.tolist()
+        # yuday2 = headdf2['sfscore1'].values.tolist()
+        earnlist2 = []
+        moneyrandom=0
+        money2=0
+        with open(s2file, 'r') as fp2:
+            for line in fp2:
+                linelist = line.strip().split(',')
+                # if linelist[1] == 'NULL' or linelist[4] == 'NULL' or linelist[5] == 'NULL' or linelist[-2] == 'NULL':
+                #     continue
+                # linelist.remove(linelist[0])
+                if linelist[0] in phnlist1:
+                    # if float(linelist[1])>0:
+                    moneyrandom+=float(linelist[1])
+                if linelist[0] in phnlist2:
+                    earnlist2.append(linelist)
+        money1=money1+moneyrandom
+        earndf = pd.DataFrame(earnlist2,
+                             columns=['phn', 'earn', 'sfscore'])
+        earndf['earn'] = earndf['earn'].astype('float')
+        earndf['sfscore'] = earndf['sfscore'].astype('float')
+        earndfw = earndf.sort_values(by='sfscore', ascending=False)
+        earnheaddf=earndfw.head(headnum1)
+        phnlist2=earnheaddf['phn'].values.tolist()
+        earnmoney=earnheaddf['earn'].values.tolist()
+        for em in earnmoney:
+            # if em>0:
+                money2+=em
+        yuday2=aucdf['yuqiday1'][aucdf['phn'].isin(phnlist2)].values.tolist()
+        yunum2 = 0
+        for yu in yuday2:
+            if yu == 0.0:
+                yunum2 += 1
+        yurato2 = yunum2 * 1.0 / headnum1
+    print "只有风险分"
+    print '逾期率：',yurato1/5,'收益：',money1/5
+    print '加入收益分'
+    print '逾期率：', yurato2, '收益：', money2
+    # print aucdfw
+def pass_overdue():
+    int_file = '/Users/ufenqi/Documents/dataming/integration_new/data/c_score_9010'
+    userlist = []
+    with open(int_file, 'r') as fp2:
+        for line in fp2:
+            linelist = line.strip().split(',')
+            userlist.append(linelist)
+    aucdf = pd.DataFrame(userlist, columns=['phn', 'time', 'score', 'overday'])
+
+    aucdf['overday'] = aucdf['overday'].astype('float')
+    aucdf['score'] = aucdf['score'].astype('float')
+    aucdf=aucdf[['phn','score','overday']]
+    # aucdf.to_excel('/Users/ufenqi/Documents/score_902.xlsx',index=False)
+    aucdf.to_csv('/Users/ufenqi/Documents/score_902.csv',index=False)
+    # print aucdf.head()
+    # aucdf['yuqiday1'] = aucdf['yuqiday']
+    # aucdfw = aucdf.sort_values(by='sfscore1', ascending=False)
+    # # print aucdfw.head()
+    # dfl=len(aucdfw)
+    # for li in range(5,100,5):
+    #     hnum=dfl*li/100
+    #     # print hnum
+    #     hdf=aucdfw.head(hnum)
+    #     hdf = hdf[hdf['yuqiday1'] > -1]
+    #     # hdf=hdf.drop(hdf[(hdf['yuqiday1']>=20) & (hdf['yuqiday1']<=29)].index)
+    #     hdf['yuqiday1'][(hdf['yuqiday1'] > -1) & (hdf['yuqiday1'] < 30)] = 1
+    #     hdf['yuqiday1'][hdf['yuqiday1'] != 1] = 0
+    #     yunum = len(hdf[hdf['yuqiday1'] == 0])
+    #     print '通过率：'+str(li)+'%'
+    #     print '逾期率：', yunum * 1.0 / len(hdf)
 
 if __name__ == '__main__':
 
@@ -1109,3 +1298,7 @@ if __name__ == '__main__':
     # describute()
     # fea_plt()
     # auctaobao()
+    # earning()
+    # earning_class()
+    # earning_assess()
+    # pass_overdue()

@@ -10,7 +10,9 @@ import json
 reload(sys)
 
 sys.setdefaultencoding('utf-8')
-
+'''
+woe处理
+'''
 class WOE:
     def __init__(self):
         self._WOE_MIN = -20
@@ -63,7 +65,7 @@ class WOE:
                 woe1 = self._WOE_MAX
             else:
                 woe1 = math.log(rate_event / rate_non_event)
-            woe_dict[x1] = woe1
+            woe_dict[x1] = round(woe1,10)
             iv += (rate_event - rate_non_event) * woe1
         return woe_dict, iv
 
@@ -176,6 +178,8 @@ class WOE:
     def WOE_MAX(self, woe_max):
         self._WOE_MAX = woe_max
     def train(self,dfname):
+        UID = dconf.uid
+        TARGET = dconf.target
         f_file = dconf.data_path + dfname
         out_name = 'woe' + dfname
         out_file = dconf.data_path + out_name
@@ -188,8 +192,9 @@ class WOE:
                 linelist = line.strip().split(',')
                 feanamedic[linelist[0]] = linelist[1]
         traindf = pd.read_csv(f_file)
-        target = '1'
-        IDcol = '0'
+        traindf=traindf.round(10)
+        target = TARGET
+        IDcol = UID
         predictors = [x for x in traindf.columns if x not in [target, IDcol]]
         tn = traindf[predictors].values
         b, c = self.woe(tn, traindf[target])
@@ -202,30 +207,30 @@ class WOE:
             woe_list=b[i]
             woe_keylist=woe_list.keys()
             woe_valuelist=woe_list.values()
-            # print woe_keylist
-            # print woe_valuelist
             traindf[predictors[i]].replace(woe_keylist, woe_valuelist, inplace=True)
+            print type(b[i])
             woedic[feanamedic[predictors[i]]]=b[i]
         json.dump(woedic, wfp)
         for col in predictors:
             traindf[col] = traindf[col].astype('float64')
-        # print traindf.dtypes
+        traindf = traindf.round(10)
         traindf.to_csv(out_file, index=False)
-        # trainnp = a.woe_replace(tn, b)
     def test(self,dfname):
+        UID = dconf.uid
+        TARGET = dconf.target
         f_file = dconf.data_path + dfname
         out_name = 'woe' + dfname
         out_file = dconf.data_path + out_name
         json_file = dconf.config_path + 'woe_value.json'
         s_file = dconf.config_path + dconf.featurename
         testdf = pd.read_csv(f_file)
+        testdf=testdf.round(10)
         feaidlist = []
         feanamedic = {}
-        # feaidlist.append('0')
-        if '1' in testdf.columns.tolist():
-            flist = ['0', '1']
+        if TARGET in testdf.columns.tolist():
+            flist = [UID, TARGET]
         else:
-            flist = ['0']
+            flist = [UID]
         with open(s_file, 'r') as fp:
             for line in fp:
                 linelist = line.strip().split(',')
@@ -234,10 +239,10 @@ class WOE:
                 feanamedic[linelist[0]] = linelist[1]
         testdf = testdf[flist]
         columns = testdf.columns.tolist()
-        columns.remove('0')
+        columns.remove(UID)
         # print columns
-        if '1' in columns:
-            columns.remove('1')
+        if TARGET in columns:
+            columns.remove(TARGET)
         with open(json_file, 'r') as fp:
             c = fp.readline()
             c = json.loads(c)
@@ -248,14 +253,13 @@ class WOE:
             woe_keylist=[]
             for ks in woe_keylist_str:
                 woe_keylist.append(float(ks))
-            # print col
             print woe_keylist
             print woe_valuelist
-            # print testdf.dtypes
             testdf[col].replace(woe_keylist, woe_valuelist, inplace=True)
         for col in columns:
             testdf[col] = testdf[col].astype('float64')
         print testdf.dtypes
+        testdf=testdf.round(10)
         testdf.to_csv(out_file, index=False)
 
 if __name__ == '__main__':
@@ -266,27 +270,3 @@ if __name__ == '__main__':
         a.train(input_file)
     if tat == 'test':
         a.test(input_file)
-    # traindf = pd.read_csv('/Users/ufenqi/Downloads/trainnoonehot1.csv')
-    # testdf = pd.read_csv('/Users/ufenqi/Downloads/testnoonehot1.csv')
-    # target = '1'
-    # IDcol = '0'
-    # predictors = [x for x in traindf.columns if x not in [target, IDcol]]
-    # print traindf.head()
-    # tn=traindf[predictors].values
-    # b,c=a.woe(tn,traindf[target])
-    # trainnp=a.woe_replace(tn,b)
-    # testn=testdf[predictors]
-    # trainnp = a.woe_replace(tn, b)
-    # testnp = a.woe_replace(testn, b)
-    # # print d[0]
-    # train1df=pd.DataFrame(trainnp,columns=predictors)
-    # test1df=pd.DataFrame(testnp,columns=predictors)
-    # train1df['0']=traindf['0']
-    # train1df['1'] = traindf['1']
-    # test1df['0'] = testdf['0']
-    # test1df['1'] = testdf['1']
-    # test1df.to_csv('/Users/ufenqi/Downloads/testwoe1.csv', index=False)
-    # train1df.to_csv('/Users/ufenqi/Downloads/trainwoe1.csv', index=False)
-    # print b
-    # print d[1]
-    # print tn[1]

@@ -170,9 +170,10 @@ def partial_table(p):
         print p
         prefix.add(p[:i])
         postfix = {p[j:i+1] for j in range(1,i+1)}
-        # print 'prefix',prefix
-        # print 'postfix',postfix
+        print 'prefix',prefix
+        print 'postfix',postfix
         ret.append(len((prefix&postfix or {''}).pop()))
+    print ret
     return ret
 if __name__ == '__main__':
     x = rand_str(40000)

@@ -10,7 +10,6 @@ def train(dfname):
     f_file = dconf.data_path + dfname
     out_name = 'code' + dfname
     out_file = dconf.data_path + out_name
-    # out_file = dconf.data_path + 'code' + dfname
     json_file = dconf.config_path + 'binning.json'
     s_file = dconf.config_path + dconf.featurename
     feaidlist = []
@@ -26,8 +25,6 @@ def train(dfname):
     columnslist = fdf.columns.tolist()
     columnslist.remove('0')
     columnslist.remove('1')
-    # columnslist.remove('2')
-    # columnslist.remove('63')
     jsonc_file = dconf.config_path + 'classfeaname.json'
     with open(jsonc_file, 'r') as fp:
         cc = fp.readline()
@@ -68,8 +65,6 @@ def test(dfname):
     # print columns
     if '1' in columns:
         columns.remove('1')
-    # columns.remove('2')
-    # columns.remove('63')
     jsonc_file = dconf.config_path + 'classfeaname.json'
     with open(jsonc_file, 'r') as fp:
         cc = fp.readline()
@@ -84,23 +79,6 @@ def test(dfname):
             testdf[feid][testdf[feid] != 'no'] = '1'
             testdf[feid][testdf[feid] == 'no'] = '0'
             testdf[feid] = testdf[feid].astype('float64')
-
-
-
-    # classname_file = dconf.config_path + 'classname'
-    # with open(classname_file, 'r') as fp:
-    #     for line in fp:
-    #         linelist = line.strip().split(',')
-    #         if linelist[0] in ['2', '63']:
-    #             continue
-    #         print linelist[0]
-    #         columns.remove(linelist[0])
-    #         testdf[linelist[0]] = testdf[linelist[0]].astype('string')
-    #         testdf[linelist[0]][testdf[linelist[0]] == linelist[1]] = 'no'
-    #         # testdfall['1'][testdfall['1'] != 1] = 0
-    #         testdf[linelist[0]][testdf[linelist[0]] != 'no'] = '1'
-    #         testdf[linelist[0]][testdf[linelist[0]] == 'no'] = '0'
-    #         testdf[linelist[0]] = testdf[linelist[0]].astype('float64')
     with open(json_file , 'r') as fp:
         c = fp.readline()
         c = json.loads(c)
@@ -126,11 +104,7 @@ def test(dfname):
         if len(vvl) != 0:
             # print col
             testdf[col].replace(vvl, vvr, inplace=True)
-    # json.dump(tiandic, wfp)
     print testdf.head()
-    # del testdf['43']
-    # del testdf['44']
-    # del testdf['45']
     testdf.to_csv(out_file, index=False)
     return out_name
 if __name__ == '__main__':

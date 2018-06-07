@@ -18,26 +18,37 @@ import offline_db_conf as dconf
 import logging
 import shutil
 import math
-import feature_distribute as fd
-import logHandle as lh
-import feature_fenxiang2017max as ff
-import feature_indicate as fin
-import trainmodel as tm
-import trainmodelpre as tmp
-import feature_preproccess as fp
+import feature_class_replace as fcr
+import feature_ceiling as fc
+import feature_log_handle as lh
+import feature_binning as fb
+import feature_dummy_variable as fdv
+import train_model as tm
+import train_model_pre as tmp
+import feature_tocsv as fp
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
 def train(file_name):
-    # file_name = fp.traincsv(file_name)
-    file_name = fd.train(file_name)
+    # 类别型编码
+    file_name = fcr.train(file_name)
+    # 哑变量
+    file_name = fdv.train(file_name)
+    # 天花板地板
+    file_name = fc.train(file_name)
+    # log、归一化
     file_name = lh.train(file_name)
-    ff.train(file_name)
+    # 分箱
+    fb.train(file_name)
 def test(file_name):
-    # file_name=fp.testcsv(file_name)
-    file_name = fd.test(file_name)
+    # 类别型编码
+    file_name = fcr.test(file_name)
+    # 哑变量、天花板地板
+    file_name = fc.test(file_name)
+    # log、归一化
     file_name=lh.test(file_name)
-    ff.test(file_name)
+    # 分箱
+    fb.test(file_name)
 if __name__ == '__main__':
     tat = sys.argv[1]
     input_file = sys.argv[2]

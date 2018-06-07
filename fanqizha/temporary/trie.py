@@ -17,6 +17,7 @@ class Trie:
         rightroot[self.END] = None
     def run_dic(self,node,word):
         if isinstance(node, dict):
+            print node.keys()
             for x in range(len(node)):
                 if self.END in node.keys()[x]:
                     self.phnlist.append(word)
@@ -31,6 +32,7 @@ class Trie:
             if c not in node:
                 return False
             node = node[c]
+        print c,node
         self.run_dic(node,word)
         # if self.END in node:
         #     phnlist.append()
